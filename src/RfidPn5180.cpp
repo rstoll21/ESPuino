@@ -192,13 +192,8 @@ void Rfid_Task(void *parameter) {
 		} else if (RFID_PN5180_NFC15693_STATE_SETUPRF == stateMachine) {
 			nfc15693.setupRF();
 		} else if (RFID_PN5180_NFC15693_STATE_DISABLEPRIVACYMODE == stateMachine) {
-			// check for ICODE-SLIX2 password protected tag
-			// put your privacy password here, e.g.:
-			// https://de.ifixit.com/Antworten/Ansehen/513422/nfc+Chips+f%C3%BCr+tonies+kaufen
-			//
-			// default factory password for ICODE-SLIX2 is {0x0F, 0x0F, 0x0F, 0x0F}
-			//
-			const uint8_t password[] = {0x0F, 0x0F, 0x0F, 0x0F};
+			// ICODE-SLIX2 privacy password 
+			//const uint8_t password[] = s_password; 
 			ISO15693ErrorCode myrc = nfc15693.disablePrivacyMode(password);
 			if (ISO15693_EC_OK == myrc) {
 				if (showDisablePrivacyNotification) {

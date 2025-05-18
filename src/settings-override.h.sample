@@ -81,6 +81,7 @@
 
 	#ifdef RFID_READER_TYPE_PN5180
 		//#define PN5180_ENABLE_LPCD        // Wakes up ESPuino if RFID-tag was applied while deepsleep is active.
+		constexpr uint8_t password[] = {0x0F, 0x0F, 0x0F, 0x0F}; //*// put your privacy password here for ICODE-SLIX2  e.g.: https://de.ifixit.com/Antworten/Ansehen/513422/nfc+Chips+f%C3%BCr+tonies+kaufen
 	#endif
 
 	#if defined(RFID_READER_TYPE_MFRC522_I2C) || defined(RFID_READER_TYPE_MFRC522_SPI)
@@ -233,7 +234,7 @@
 	#endif
 
 	#ifdef MEASURE_BATTERY_VOLTAGE
-		constexpr float s_offsetVoltage = 0.1;            // Correct the voltage measured by ESP. Add an correction-value (= Measured - LogValue) in Volt here
+		constexpr float offsetVoltage = 0.1;            // Correct the voltage measured by ESP. Add an correction-value (= Measured - LogValue) in Volt here
 		// (optional) Default-voltages for battery-monitoring via Neopixel; can be changed later via WebGUI
         //LiFePO4
         constexpr float s_warningLowVoltage = 3.1;                      // If battery-voltage is <= this value, a cyclic warning will be indicated by Neopixel (can be changed via GUI!)
