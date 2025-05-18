@@ -46,7 +46,7 @@
     #ifdef RFID_READER_TYPE_PN5180
         #define RFID_BUSY                   33          // PN5180 BUSY PIN
         #define RFID_RST                    22          // PN5180 RESET PIN
-        #define RFID_IRQ                    99          // Depending on your configuration this needs to be adjusted to 32.
+        #define RFID_IRQ                    99          // Depending on your configuration this needs to be adjusted to 32 to use LPCD (wake on RFID).
     #endif
 
     // I2S (DAC)

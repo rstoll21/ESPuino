@@ -96,6 +96,12 @@ void Button_Init() {
 	gShutdownButton = 5;
 		#endif
 	#endif
+	#if (defined(BUTTON_4_ENABLE) || defined(EXPANDER_4_ENABLE)) && (defined(BUTTON_5_ENABLE) || defined(EXPANDER_5_ENABLE)) /* added 2025-02-10  for multi button shutdown animation*/
+		#if (BUTTON_MULTI_45_LONG == CMD_SLEEPMODE)
+	gShutdownButton = 45;
+		#endif
+	#endif
+	
 #endif
 
 // Activate internal pullups for all enabled buttons connected to GPIOs
@@ -269,10 +275,29 @@ void Button_DoButtonActions(void) {
 		gButtons[3].isPressed = false;
 		gButtons[5].isPressed = false;
 		Cmd_Action(BUTTON_MULTI_35);
-	} else if (gButtons[4].isPressed && gButtons[5].isPressed) {
-		gButtons[4].isPressed = false;
-		gButtons[5].isPressed = false;
-		Cmd_Action(BUTTON_MULTI_45);
+	} else if (gButtons[4].isPressed && gButtons[5].isPressed) { //*// added LONG PRESS 2025-02-10
+		if ((gButtons[4].lastReleasedTimestamp > gButtons[4].lastPressedTimestamp) && (gButtons[5].lastReleasedTimestamp > gButtons[5].lastPressedTimestamp) ) { // short action
+					if ((gButtons[4].lastReleasedTimestamp - gButtons[4].lastPressedTimestamp < intervalToLongPress) && (gButtons[5].lastReleasedTimestamp - gButtons[5].lastPressedTimestamp < intervalToLongPress)) {
+						Cmd_Action(BUTTON_MULTI_45);
+					} else {
+						// sleep-mode should only be triggered on release, otherwise it will wake it up directly again
+						if (BUTTON_MULTI_45_LONG == CMD_SLEEPMODE) {
+							Cmd_Action(BUTTON_MULTI_45_LONG);
+						}
+					}
+
+					gButtons[4].isPressed = false;					
+					gButtons[5].isPressed = false;
+					//Cmd_Action(BUTTON_MULTI_45);
+		} else if (BUTTON_MULTI_45_LONG != CMD_SLEEPMODE) { // long action, if not sleep-mode
+					// start action if intervalToLongPress has been reached
+					unsigned long currentTimestamp = millis();
+					if (((currentTimestamp - gButtons[4].lastPressedTimestamp) > intervalToLongPress) && (currentTimestamp - gButtons[5].lastPressedTimestamp) > intervalToLongPress)  {
+						gButtons[4].isPressed = false;
+						gButtons[5].isPressed = false;
+						Cmd_Action(BUTTON_MULTI_45_LONG);
+					}
+				}
 	} else {
 		unsigned long currentTimestamp = millis();
 		for (uint8_t i = 0; i <= 5; i++) {

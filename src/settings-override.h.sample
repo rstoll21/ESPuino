@@ -7,6 +7,8 @@
 
     //######################### INFOS ####################################
 	// This is the general configfile for ESPuino-configuration.
+	#define ESP_SETTING_VERSION_MAJOR 1
+	#define ESP_SETTING_VERSION_MINOR 5
 
 	//################## HARDWARE-PLATFORM ###############################
 	/* Make sure to also edit the configfile, that is specific for your platform.
@@ -149,10 +151,12 @@
 	#define BUTTON_MULTI_35   CMD_NOTHING
 	#define BUTTON_MULTI_45   CMD_NOTHING
 
+	#define BUTTON_MULTI_45_LONG   CMD_SLEEPMODE			// Press two buttons long together 
+
 	//#################### Various settings ##############################
 
 	// Serial-logging-configuration
-	#define SERIAL_LOGLEVEL LOGLEVEL_DEBUG              // Current loglevel for serial console
+	#define SERIAL_LOGLEVEL LOGLEVEL_DEBUG              // Current loglevel for serial console [LOGLEVEL_ERROR, LOGLEVEL_NOTICE, LOGLEVEL_INFO, LOGLEVEL_DEBUG ]
 
     // DEPRECATED: This is now done using dynamic network configuration.
     //              If left, it is used for the automatic migration exactly once
@@ -169,12 +173,12 @@
 	constexpr uint16_t intervalToLongPress = 700;                 // Interval in ms to distinguish between short and long press of buttons
 
 	// Buttons active state: Default 0 for active LOW, 1 for active HIGH e.g. for TTP223 Capacitive Touch Switch Button (FinnBox)
-	#define BUTTON_0_ACTIVE_STATE 0
-	#define BUTTON_1_ACTIVE_STATE 0
-	#define BUTTON_2_ACTIVE_STATE 0
-	#define BUTTON_3_ACTIVE_STATE 0
-	#define BUTTON_4_ACTIVE_STATE 0
-	#define BUTTON_5_ACTIVE_STATE 0
+	#define BUTTON_0_ACTIVE_STATE 0		// 0: NEXT_BUTTON
+	#define BUTTON_1_ACTIVE_STATE 0		// 1: PREVIOUS_BUTTON
+	#define BUTTON_2_ACTIVE_STATE 0		// 2: PAUSEPLAY_BUTTON
+	#define BUTTON_3_ACTIVE_STATE 0 	// 3: ROTARYENCODER_BUTTON
+	#define BUTTON_4_ACTIVE_STATE 0		// 4: BUTTON_4
+	#define BUTTON_5_ACTIVE_STATE 0		// 5: BUTTON_5
 
 	//#define CONTROLS_LOCKED_BY_DEFAULT			// If set the controls are locked at boot
 	#define INCLUDE_ROTARY_IN_CONTROLS_LOCK			// If set the rotary encoder is locked if controls are locked
@@ -229,7 +233,14 @@
 	#endif
 
 	#ifdef MEASURE_BATTERY_VOLTAGE
+		constexpr float s_offsetVoltage = 0.1;            // Correct the voltage measured by ESP. Add an correction-value (= Measured - LogValue) in Volt here
 		// (optional) Default-voltages for battery-monitoring via Neopixel; can be changed later via WebGUI
+        //LiFePO4
+        constexpr float s_warningLowVoltage = 3.1;                      // If battery-voltage is <= this value, a cyclic warning will be indicated by Neopixel (can be changed via GUI!)
+		constexpr float s_warningCriticalVoltage = 3.0;                 // If battery-voltage is <= this value, assume battery near-empty. Set to 0V to disable.
+		constexpr float s_voltageIndicatorLow = 2.9;                    // Lower range for Neopixel-voltage-indication (0 leds) (can be changed via GUI!)
+		constexpr float s_voltageIndicatorHigh = 3.4;                   // Upper range for Neopixel-voltage-indication (all leds) (can be changed via GUI!)
+		// LiPo
 		constexpr float s_warningLowVoltage = 3.4;                      // If battery-voltage is <= this value, a cyclic warning will be indicated by Neopixel (can be changed via GUI!)
 		constexpr float s_warningCriticalVoltage = 3.1;                 // If battery-voltage is <= this value, assume battery near-empty. Set to 0V to disable.
 		constexpr float s_voltageIndicatorLow = 3.0;                    // Lower range for Neopixel-voltage-indication (0 leds) (can be changed via GUI!)

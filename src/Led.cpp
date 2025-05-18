@@ -289,6 +289,10 @@ bool CheckForPowerButtonAnimation() {
 		if (gButtons[gShutdownButton].isPressed && (millis() - gButtons[gShutdownButton].firstPressedTimestamp >= 150) && gButtonInitComplete) {
 			return true;
 		}
+	} else if (gShutdownButton == 45) { /* added 2025-02-10 for long press multi button shutdown animation*/
+		if (gButtons[4].isPressed && gButtons[5].isPressed && (millis() - gButtons[4].firstPressedTimestamp >= 150) && gButtonInitComplete) {
+			return true;
+		}
 	}
 	return false;
 }
@@ -524,40 +528,80 @@ AnimationReturnType Animation_Shutdown(const bool startNewAnimation, CRGBSet &le
 
 	if constexpr (NUM_INDICATOR_LEDS == 1) {
 		leds = CRGB::Black;
-		if (millis() - gButtons[gShutdownButton].firstPressedTimestamp <= intervalToLongPress) {
-			leds[0] = CRGB::Red;
-			animationDelay = 5;
-		} else {
-			if (singleLedStatus) {
+		if (gShutdownButton == 45) { /* added 2025-02-10 for long press multi button shutdown animation*/ // TODO: optimize: reduce to one procedure for single and multi shutdown btns
+				if ((millis() - gButtons[4].firstPressedTimestamp <= intervalToLongPress) && (millis() - gButtons[5].firstPressedTimestamp <= intervalToLongPress)) {
 				leds[0] = CRGB::Red;
+				animationDelay = 5;
+			} else {
+				if (singleLedStatus) {
+					leds[0] = CRGB::Red;
+				}
+				singleLedStatus = !singleLedStatus;
+				animationDelay = 50;
 			}
-			singleLedStatus = !singleLedStatus;
-			animationDelay = 50;
+		} else { // single button long press
+			if (millis() - gButtons[gShutdownButton].firstPressedTimestamp <= intervalToLongPress) {
+				leds[0] = CRGB::Red;
+				animationDelay = 5;
+			} else {
+				if (singleLedStatus) {
+					leds[0] = CRGB::Red;
+				}
+				singleLedStatus = !singleLedStatus;
+				animationDelay = 50;
+			}
 		}
 		animationActive = false;
 	} else {
-		if ((millis() - gButtons[gShutdownButton].firstPressedTimestamp >= intervalToLongPress) && (animationIndex >= leds.size())) {
-			animationDelay = 50;
-			if (!gButtons[gShutdownButton].isPressed) {
-				// increase animation index to bail out, if we had a kombi-button
-				animationIndex++;
-				if (animationIndex >= leds.size() + 3) {
-					animationActive = false; // this is approx. 150ms after the button is released
+		if (gShutdownButton == 45) { /* added 2025-02-10 for long press multi button shutdown animation*/ // TODO: optimize: reduce to one procedure for single and multi shutdown btns
+			if ((millis() - gButtons[4].firstPressedTimestamp >= intervalToLongPress) && (millis() - gButtons[5].firstPressedTimestamp >= intervalToLongPress) && (animationIndex >= leds.size())) {
+				animationDelay = 50;
+				if (!gButtons[4].isPressed) {
+					// increase animation index to bail out, if we had a kombi-button
+					animationIndex++;
+					if (animationIndex >= leds.size() + 3) {
+						animationActive = false; // this is approx. 150ms after the button is released
+					}
+				}
+			} else {
+				if (animationIndex == 0) {
+					leds = CRGB::Black;
+				}
+				if (animationIndex < leds.size()) {
+					leds[Led_Address(animationIndex)] = CRGB::Red;
+					if (gButtons[4].currentState) {
+						animationDelay = 5;
+						animationActive = false;
+					} else {
+						animationDelay = intervalToLongPress / leds.size();
+					}
+					animationIndex++;
 				}
 			}
-		} else {
-			if (animationIndex == 0) {
-				leds = CRGB::Black;
-			}
-			if (animationIndex < leds.size()) {
-				leds[Led_Address(animationIndex)] = CRGB::Red;
-				if (gButtons[gShutdownButton].currentState) {
-					animationDelay = 5;
-					animationActive = false;
-				} else {
-					animationDelay = intervalToLongPress / leds.size();
+		} else { // single button long press
+			if ((millis() - gButtons[gShutdownButton].firstPressedTimestamp >= intervalToLongPress) && (animationIndex >= leds.size())) {
+				animationDelay = 50;
+				if (!gButtons[gShutdownButton].isPressed) {
+					// increase animation index to bail out, if we had a kombi-button
+					animationIndex++;
+					if (animationIndex >= leds.size() + 3) {
+						animationActive = false; // this is approx. 150ms after the button is released
+					}
 				}
-				animationIndex++;
+			} else {
+				if (animationIndex == 0) {
+					leds = CRGB::Black;
+				}
+				if (animationIndex < leds.size()) {
+					leds[Led_Address(animationIndex)] = CRGB::Red;
+					if (gButtons[gShutdownButton].currentState) {
+						animationDelay = 5;
+						animationActive = false;
+					} else {
+						animationDelay = intervalToLongPress / leds.size();
+					}
+					animationIndex++;
+				}
 			}
 		}
 	}
