@@ -966,8 +966,8 @@ void handleGetInfo(AsyncWebServerRequest *request) {
 		JsonObject softwareObj = infoObj.createNestedObject("software");
 		softwareObj["version"] = (String) softwareRevision;
 		softwareObj["git"] = (String) gitRevision;
-		softwareObj["arduino"] = String(ESP_ARDUINO_VERSION_MAJOR) + "." + String(ESP_ARDUINO_VERSION_MINOR) + "." + String(ESP_ARDUINO_VERSION_PATCH);
-		softwareObj["setting"] = String(ESP_SETTING_VERSION_MAJOR) + "." + String(ESP_SETTING_VERSION_MINOR);																				   
+		softwareObj["setting"] = String(ESP_SETTING_VERSION_MAJOR) + "." + String(ESP_SETTING_VERSION_MINOR);	
+		softwareObj["arduino"] = String(ESP_ARDUINO_VERSION_MAJOR) + "." + String(ESP_ARDUINO_VERSION_MINOR) + "." + String(ESP_ARDUINO_VERSION_PATCH);																			   
 		softwareObj["idf"] = String(ESP.getSdkVersion());
 	}
 	// hardware

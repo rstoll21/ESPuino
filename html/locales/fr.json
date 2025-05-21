@@ -344,6 +344,7 @@
 		"title": "Informations",
 		"softwareversion": "ESPuino {{softwareversion}}",
 		"gitversion": "ESPuino {{gitversion}}",
+		"settingsversion": "Settings Version : {{settingsversion}}",
 		"arduinoversion": "Version Arduino : {{arduinoversion}} (ESP-IDF {{idfversion}})",
 		"hardware": "Matériel : {{hwmodel}}, Révision {{hwrevision}}, CPU : {{hwfreq}} MHZ",
 		"freeheap": "Mémoire libre : {{freeheap}} octets",
