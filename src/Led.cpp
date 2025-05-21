@@ -862,7 +862,7 @@ AnimationReturnType Animation_Busy(const bool startNewAnimation, CRGBSet &leds) 
 		leds = CRGB::Black;
 		singleLedStatus = !singleLedStatus;
 		if (singleLedStatus) {
-			leds[0] = CRGB::BlueViolet;
+			leds[0] = CRGB::Violet;
 		}
 		animationDelay = 100;
 		animationActive = false;
@@ -932,7 +932,7 @@ AnimationReturnType Animation_Progress(const bool startNewAnimation, CRGBSet &le
 		lastPos = gPlayProperties.currentRelPos;
 		leds = CRGB::Black;
 		if constexpr (NUM_INDICATOR_LEDS == 1) {
-			leds[0].setHue((uint8_t) (85 - ((double) 90 / 100) * gPlayProperties.currentRelPos));
+			leds[0].setHue((uint8_t) (PROGRESS_HUE_START + ((PROGRESS_HUE_END - PROGRESS_HUE_START) * ((float) gPlayProperties.currentRelPos) / 100))); //*// leds[0].setHue((uint8_t) (85 - ((double) 90 / 100) * gPlayProperties.currentRelPos));
 		} else {
 			const uint32_t ledValue = std::clamp<uint32_t>(map(gPlayProperties.currentRelPos, 0, 98, 0, leds.size() * DIMMABLE_STATES), 0, leds.size() * DIMMABLE_STATES);
 			const uint8_t fullLeds = ledValue / DIMMABLE_STATES;
